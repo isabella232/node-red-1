@@ -18,7 +18,7 @@ module.exports = function(RED) {
     "use strict";
     var mongo = require('mongodb');
     var MongoClient = mongo.MongoClient;
-
+    var cfenv = require("cfenv");
     function MongoNode(n) {
         RED.nodes.createNode(this,n);
         this.hostname = n.hostname;
@@ -51,6 +51,8 @@ module.exports = function(RED) {
 
 
     function MongoOutNode(n) {
+        var appEnv = cfenv.getAppEnv();
+
         RED.nodes.createNode(this,n);
         this.collection = n.collection;
         this.mongodb = n.mongodb;
@@ -58,11 +60,12 @@ module.exports = function(RED) {
         this.upsert = n.upsert || false;
         this.multi = n.multi || false;
         this.operation = n.operation;
-        this.mongoConfig = RED.nodes.getNode(this.mongodb);
+
+        this.mongoConfig = appEnv.getService(this.mongodb);
 
         if (this.mongoConfig) {
             var node = this;
-            MongoClient.connect(this.mongoConfig.url, function(err, db) {
+            MongoClient.connect(this.mongoConfig.credentials.url, function(err, db) {
                 if (err) {
                     node.error(err);
                 } else {
@@ -155,15 +158,18 @@ module.exports = function(RED) {
     RED.nodes.registerType("mongodb out",MongoOutNode);
 
     function MongoInNode(n) {
+        var appEnv = cfenv.getAppEnv();
+
         RED.nodes.createNode(this,n);
         this.collection = n.collection;
         this.mongodb = n.mongodb;
         this.operation = n.operation || "find";
-        this.mongoConfig = RED.nodes.getNode(this.mongodb);
+
+        this.mongoConfig = appEnv.getService(this.mongodb);
 
         if (this.mongoConfig) {
             var node = this;
-            MongoClient.connect(this.mongoConfig.url, function(err,db) {
+            MongoClient.connect(this.mongoConfig.credentials.url, function(err,db) {
                 if (err) {
                     node.error(err);
                 } else {

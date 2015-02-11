@@ -18,16 +18,17 @@ module.exports = function(RED) {
     "use strict";
     var util = require("util");
     var redis = require("redis");
-
+    var cfenv = require("cfenv");
     var hashFieldRE = /^([^=]+)=(.*)$/;
 
     var redisConnectionPool = function() {
         var connections = {};
         var obj = {
-            get: function(host,port) {
+            get: function(host,port,password) {
                 var id = host+":"+port;
                 if (!connections[id]) {
                     connections[id] = redis.createClient(port,host);
+                    connections[id].auth(password);
                     connections[id].on("error",function(err) {
                             util.log("[redis] "+err);
                     });
@@ -57,12 +58,12 @@ module.exports = function(RED) {
 
     function RedisOutNode(n) {
         RED.nodes.createNode(this,n);
-        this.port = n.port||"6379";
-        this.hostname = n.hostname||"127.0.0.1";
+        var appEnv = cfenv.getAppEnv();
+        var redisService = appEnv.getService(this.hostname);
         this.key = n.key;
         this.structtype = n.structtype;
 
-        this.client = redisConnectionPool.get(this.hostname,this.port);
+        this.client = redisConnectionPool.get(redisService.credentials.host, redisService.credentials.port, redisService.credentials.password);
 
         if (this.client.connected) {
             this.status({fill:"green",shape:"dot",text:"connected"});

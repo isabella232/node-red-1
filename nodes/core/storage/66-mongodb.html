@@ -14,56 +14,13 @@
   limitations under the License.
 -->
 
-<script type="text/x-red" data-template-name="mongodb">
-    <div class="form-row">
-        <label for="node-config-input-hostname"><i class="fa fa-bookmark"></i> Host</label>
-        <input class="input-append-left" type="text" id="node-config-input-hostname" placeholder="localhost" style="width: 40%;" >
-        <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
-        <input type="text" id="node-config-input-port" placeholder="27017" style="width:45px">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-db"><i class="fa fa-database"></i> Database</label>
-        <input type="text" id="node-config-input-db" placeholder="test">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-user"><i class="fa fa-user"></i> Username</label>
-        <input type="text" id="node-config-input-user">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
-        <input type="password" id="node-config-input-password">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-config-input-name" placeholder="Name">
-    </div>
-</script>
 
-<script type="text/javascript">
-    RED.nodes.registerType('mongodb', {
-        category: 'config',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            hostname: {value: "127.0.0.1", required: true},
-            port: {value: 27017, required: true},
-            db: {value: "", required: true},
-            name: {value: ""}
-        },
-        credentials: {
-            user: {type: "text"},
-            password: {type: "password"}
-        },
-        label: function() {
-            return this.name || this.hostname + ":" + this.port + "/" + this.db;
-        }
-    });
-</script>
 
 
 <script type="text/x-red" data-template-name="mongodb out">
     <div class="form-row">
-        <label for="node-input-mongodb"><i class="fa fa-bookmark"></i> Server</label>
-        <input type="text" id="node-input-mongodb">
+        <label for="node-input-mongodb"><i class="fa fa-bookmark"></i> Mongodb Service</label>
+        <input type="text" id="node-input-mongodb" placeholder="service name">
     </div>
     <div class="form-row">
         <label for="node-input-collection"><i class="fa fa-briefcase"></i> Collection</label>
@@ -146,7 +103,7 @@
         category: 'storage-output',
         color: "rgb(218, 196, 180)",
         defaults: {
-            mongodb: {type: "mongodb", required: true},
+            mongodb: {value: "", required: true},
             name: {value: ""},
             collection: {value: ""},
             payonly: {value: false},
@@ -172,8 +129,8 @@
 
 <script type="text/x-red" data-template-name="mongodb in">
     <div class="form-row">
-        <label for="node-input-mongodb"><i class="fa fa-bookmark"></i> Server</label>
-        <input type="text" id="node-input-mongodb">
+        <label for="node-input-mongodb"><i class="fa fa-bookmark"></i> Mongodb Service</label>
+        <input type="text" id="node-input-mongodb" placeholder="service name">
     </div>
     <div class="form-row">
         <label for="node-input-collection"><i class="fa fa-briefcase"></i> Collection</label>
@@ -211,7 +168,7 @@
         category: 'storage-input',
         color: "rgb(218, 196, 180)",
         defaults: {
-            mongodb: {type: "mongodb", required: true},
+            mongodb: {value: "", required: true},
             name: {value: ""},
             collection: {value: ""},
             operation: {value: "find"}
